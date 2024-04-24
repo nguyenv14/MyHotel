@@ -11,25 +11,46 @@ class HotelViewModel extends ChangeNotifier {
   HotelRepository hotelRepository;
   HotelViewModel({required this.hotelRepository});
 
-  ApiResponse<List<HotelModel>> hotelListResponse = ApiResponse.loading();
+  ApiResponse<List<HotelModel>> hotelListByTypeResponse = ApiResponse.loading();
+  ApiResponse<List<HotelModel>> hotelListByLocation = ApiResponse.loading();
 
-  setHotelList(ApiResponse<List<HotelModel>> response) {
-    hotelListResponse = response;
+  setHotelListByType(ApiResponse<List<HotelModel>> response) {
+    hotelListByTypeResponse = response;
+    notifyListeners();
+  }
+
+  setHotelListByLocation(ApiResponse<List<HotelModel>> response) {
+    hotelListByLocation = response;
     notifyListeners();
   }
 
   Future fetchHotelListByType({int type = 0}) async {
-    setHotelList(ApiResponse.loading());
+    setHotelListByType(ApiResponse.loading());
     hotelRepository.fetchHotelByType(type).then((value) {
       List<dynamic> dt = value.data;
       List<HotelModel> hotels = HotelModel.getListHotel(dt);
-      setHotelList(ApiResponse.completed(hotels));
+      setHotelListByType(ApiResponse.completed(hotels));
     }).onError((error, stackTrace) {
       if (kDebugMode) {
         print(error);
         print(stackTrace);
       }
-      setHotelList(ApiResponse.error(error.toString()));
+      setHotelListByType(ApiResponse.error(error.toString()));
+    });
+  }
+
+  Future fetchHotelListByLocation(int index) async {
+    setHotelListByLocation(ApiResponse.loading());
+    hotelRepository.fetchHotelByArea(index).then((value) {
+      List<dynamic> dt = value.data;
+      List<HotelModel> hotels = HotelModel.getListHotel(dt);
+      setHotelListByLocation(ApiResponse.completed(hotels));
+    }).onError((error, stackTrace) {
+      if (kDebugMode) {
+        print(error);
+        print(stackTrace);
+      }
+      setHotelListByLocation(ApiResponse.error(error.toString()));
     });
   }
 }

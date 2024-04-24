@@ -17,4 +17,15 @@ class HotelRepositoryImp implements HotelRepository {
       throw Exception(e);
     }
   }
+
+  @override
+  Future<ObjectDTO> fetchHotelByArea(int index) async {
+    try {
+      ObjectDTO objectDTO = await _apiServices.getGetApiResponse(
+          AppUrl.hotelListByArea + "?area_id=" + (index).toString());
+      return objectDTO;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 }

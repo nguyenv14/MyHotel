@@ -3,12 +3,18 @@ import 'package:get_it/get_it.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:my_hotel/configs/routes/routes.dart';
 import 'package:my_hotel/configs/routes/routes_name.dart';
+import 'package:my_hotel/repository/Area/area_repository.dart';
+import 'package:my_hotel/repository/Area/implement_area_repository.dart';
 import 'package:my_hotel/repository/Auth/auth_repository.dart';
 import 'package:my_hotel/repository/Auth/implement_auth_repository.dart';
+import 'package:my_hotel/repository/Banner/banner_repository.dart';
+import 'package:my_hotel/repository/Banner/implement_banner_repository.dart';
 import 'package:my_hotel/repository/Hotel/hotel_repository.dart';
 import 'package:my_hotel/repository/Hotel/implement_hotel_repository.dart';
 import 'package:my_hotel/view/login/login_screen.dart';
 import 'package:my_hotel/view/splash/splash_screen.dart';
+import 'package:my_hotel/view_model/area_view_model.dart';
+import 'package:my_hotel/view_model/banner_view_model.dart';
 import 'package:my_hotel/view_model/hotel_view_model.dart';
 import 'package:my_hotel/view_model/login/login_view_model.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +26,8 @@ void main() async {
   await GetStorage.init();
   getIt.registerLazySingleton<AuthRepository>(() => AuthRepositoryImp());
   getIt.registerLazySingleton<HotelRepository>(() => HotelRepositoryImp());
+  getIt.registerLazySingleton<AreaRepository>(() => AreaRepositoryImp());
+  getIt.registerLazySingleton<BannerRepository>(() => BannerRepositoryImp());
   runApp(const MyApp());
 }
 
@@ -36,6 +44,12 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => HotelViewModel(hotelRepository: getIt()),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AreaViewModel(areaRepository: getIt()),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => BannerViewModel(bannerRepository: getIt()),
         )
       ],
       child: MaterialApp(
