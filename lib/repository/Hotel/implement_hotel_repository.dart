@@ -11,7 +11,7 @@ class HotelRepositoryImp implements HotelRepository {
   Future<ObjectDTO> fetchHotelByType(int index) async {
     try {
       ObjectDTO objectDTO = await _apiServices.getGetApiResponse(
-          AppUrl.hoteListByType + "?hotel_type=" + (index + 1).toString());
+          "${AppUrl.hoteListByType}?hotel_type=${index + 1}");
       return objectDTO;
     } catch (e) {
       throw Exception(e);
@@ -21,8 +21,30 @@ class HotelRepositoryImp implements HotelRepository {
   @override
   Future<ObjectDTO> fetchHotelByArea(int index) async {
     try {
-      ObjectDTO objectDTO = await _apiServices.getGetApiResponse(
-          AppUrl.hotelListByArea + "?area_id=" + (index).toString());
+      ObjectDTO objectDTO = await _apiServices
+          .getGetApiResponse("${AppUrl.hotelListByArea}?area_id=$index");
+      return objectDTO;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<ObjectDTO> fetchHotelById(int index) async {
+    try {
+      ObjectDTO objectDTO = await _apiServices
+          .getGetApiResponse(AppUrl.hotelById + "?hotel_id=$index");
+      return objectDTO;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<ObjectDTO> fetchHotelFavouriteId(Map<Object?, Object> data) async {
+    try {
+      ObjectDTO objectDTO =
+          await _apiServices.getPostApiResponse(AppUrl.hotelFavourite, data);
       return objectDTO;
     } catch (e) {
       throw Exception(e);

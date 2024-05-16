@@ -17,7 +17,19 @@ class BannerModel {
     required this.status,
   });
 
+  BannerModel.empty()
+      : id = 0,
+        title = '',
+        description = '',
+        page = 0,
+        link = '',
+        image = '',
+        status = 0;
+
   factory BannerModel.fromJson(Map<String, dynamic> json) {
+    if (json.isEmpty) {
+      return BannerModel.empty();
+    }
     return BannerModel(
       id: json['bannerads_id'],
       title: json['bannerads_title'],

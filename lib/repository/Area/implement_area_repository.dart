@@ -5,7 +5,7 @@ import 'package:my_hotel/data/response/dto_object.dart';
 import 'package:my_hotel/repository/Area/area_repository.dart';
 
 class AreaRepositoryImp implements AreaRepository {
-  BaseApiServices _apiServices = NetworkApiService();
+  final BaseApiServices _apiServices = NetworkApiService();
 
   @override
   Future<ObjectDTO> fetchAreaList() async {

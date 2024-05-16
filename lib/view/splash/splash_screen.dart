@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:my_hotel/configs/extensions.dart';
-import 'package:my_hotel/utils/user_db.dart';
 import 'package:my_hotel/view/splash/splash_service.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -12,7 +11,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  SplashService _splashService = SplashService();
+  final SplashService _splashService = SplashService();
 
   @override
   void initState() {
@@ -26,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
-        color: Colors.pinkAccent[100],
+        color: Colors.blueGrey,
         child: Center(
           child: Lottie.asset(
             "assets/raw/hotel.json",

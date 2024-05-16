@@ -11,7 +11,16 @@ class BrandModel {
     required this.brandStatus,
   });
 
+  BrandModel.empty()
+      : brandId = 0,
+        brandName = '',
+        brandDesc = '',
+        brandStatus = 0;
+
   factory BrandModel.fromJson(Map<String, dynamic> json) {
+    if (json.isEmpty) {
+      return BrandModel.empty();
+    }
     return BrandModel(
       brandId: json['brand_id'],
       brandName: json['brand_name'],

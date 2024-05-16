@@ -11,7 +11,7 @@ class InputPasswordComponent extends StatefulWidget {
 
 class _InputPasswordComponentState extends State<InputPasswordComponent> {
   bool _isFocused = false;
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -33,17 +33,17 @@ class _InputPasswordComponentState extends State<InputPasswordComponent> {
       decoration: BoxDecoration(
           // border: _isFocused ? Border.all(width: 2, color: widget.color) : null,
           color: Colors.white,
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
                 color: Colors.black12, blurRadius: 7, offset: Offset(1, 0))
           ],
           borderRadius: BorderRadius.circular(15)),
-      margin: EdgeInsets.symmetric(horizontal: 5),
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: TextField(
         // controller: widget.textEditingController,
         focusNode: _focusNode,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             hintText: "Enter the password",
             border: InputBorder.none,
             // focusColor: widget.color,

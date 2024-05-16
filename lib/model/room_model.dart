@@ -1,8 +1,10 @@
+import 'package:my_hotel/model/gallery_room_model.dart';
 import 'package:my_hotel/model/type_room_model.dart';
 
 class RoomModel {
   final int roomId;
   final int hotelId;
+  final List<GalleryRoomModel> galleryRoom;
   final List<RoomTypeModel> roomTypes;
   final String roomName;
   final int roomAmountOfPeople;
@@ -13,6 +15,7 @@ class RoomModel {
   RoomModel({
     required this.roomId,
     required this.hotelId,
+    required this.galleryRoom,
     required this.roomTypes,
     required this.roomName,
     required this.roomAmountOfPeople,
@@ -26,9 +29,14 @@ class RoomModel {
     List<RoomTypeModel> roomTypeList = areaJsonList
         .map((areaJson) => RoomTypeModel.fromJson(areaJson))
         .toList();
+    List<dynamic> galleryRoom = json['gallery_room'] ?? [];
+    List<GalleryRoomModel> gallery =
+        galleryRoom.map((e) => GalleryRoomModel.fromJson(e)).toList();
+    print("room");
     return RoomModel(
       roomId: json['room_id'],
       hotelId: json['hotel_id'],
+      galleryRoom: gallery,
       roomTypes: roomTypeList,
       roomName: json['room_name'],
       roomAmountOfPeople: json['room_amount_of_people'],

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:my_hotel/configs/extensions.dart';
 
@@ -27,7 +26,7 @@ class InputFieldComponent extends StatefulWidget {
 
 class _InputFieldComponentState extends State<InputFieldComponent> {
   bool _isFocused = false;
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
   bool password = false;
   @override
   void initState() {
@@ -54,13 +53,13 @@ class _InputFieldComponentState extends State<InputFieldComponent> {
       decoration: BoxDecoration(
           border: _isFocused ? Border.all(width: 2, color: widget.color) : null,
           color: Colors.white,
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
                 color: Colors.black12, blurRadius: 7, offset: Offset(1, 0))
           ],
           borderRadius: BorderRadius.circular(15)),
-      margin: EdgeInsets.symmetric(horizontal: 5),
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: TextField(
         obscureText: password,
         controller: widget.textEditingController,
@@ -71,7 +70,7 @@ class _InputFieldComponentState extends State<InputFieldComponent> {
             focusColor: widget.color,
             suffixIcon: widget.isPassword
                 ? InkWell(
-                    child: Icon(FontAwesomeIcons.eye),
+                    child: const Icon(FontAwesomeIcons.eye),
                     onTap: () {
                       setState(() {
                         setState(() {

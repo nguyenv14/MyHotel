@@ -5,7 +5,7 @@ import 'package:my_hotel/data/response/dto_object.dart';
 import 'package:my_hotel/repository/Banner/banner_repository.dart';
 
 class BannerRepositoryImp implements BannerRepository {
-  BaseApiServices _apiServices = NetworkApiService();
+  final BaseApiServices _apiServices = NetworkApiService();
   @override
   Future<ObjectDTO> fetchBannerList() async {
     ObjectDTO objectDTO =

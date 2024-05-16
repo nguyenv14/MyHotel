@@ -4,7 +4,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_hotel/configs/extensions.dart';
 import 'package:my_hotel/configs/routes/routes_name.dart';
+import 'package:my_hotel/model/customer_model.dart';
+import 'package:my_hotel/utils/user_db.dart';
 import 'package:my_hotel/view/login/components/InputFieldComponet.dart';
+import 'package:my_hotel/view_model/customer_view_model.dart';
 import 'package:my_hotel/view_model/login/login_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -16,19 +19,22 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController textControllerMail = new TextEditingController();
-  TextEditingController textControllerPass = new TextEditingController();
+  TextEditingController textControllerMail = TextEditingController();
+  TextEditingController textControllerPass = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final customerProvider =
+        Provider.of<CustomerViewModel>(context, listen: true);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
         color: Colors.grey[100],
-        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 60,
             ),
             Consumer<LoginViewModel>(
@@ -45,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             fontWeight: FontWeight.w800),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(0, 0, 40, 0),
+                        padding: const EdgeInsets.fromLTRB(0, 0, 40, 0),
                         child: Text(
                           "Unlock a world of flavors with your culinary passport.",
                           style: GoogleFonts.openSans(
@@ -53,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               fontWeight: FontWeight.bold),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 50,
                       ),
                       InputFieldComponent(
@@ -63,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.pinkAccent[100]!,
                         // isPassword: true,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       // InputPasswordComponent()
@@ -74,13 +80,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.pinkAccent[100]!,
                         isPassword: true,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           InkWell(
@@ -93,11 +99,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 30,
                       ),
                       loginViewModel.loginLoading
-                          ? Center(
+                          ? const Center(
                               child: CircularProgressIndicator(
                                 color: Colors.pinkAccent,
                               ),
@@ -110,14 +116,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                     .then((value) {
                                   // print(value.message);
                                   if (value.statusCode == 200) {
+                                    CustomerModel customerModel =
+                                        CustomerModel.fromJson(value.data);
+                                    customerProvider
+                                        .setCustomerModel(customerModel);
                                     CherryToast.success(
-                                      title: Text("Đăng nhập thành công!"),
+                                      title:
+                                          const Text("Đăng nhập thành công!"),
                                     ).show(context);
                                     Navigator.pushNamedAndRemoveUntil(context,
                                         RoutesName.home, (route) => false);
                                   } else {
                                     CherryToast.error(
-                                            title: Text(
+                                            title: const Text(
                                                 "Sai mật khẩu hoặc email!"))
                                         .show(context);
                                   }
@@ -129,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   decoration: BoxDecoration(
                                       color: Colors.pinkAccent,
                                       borderRadius: BorderRadius.circular(30)),
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                       horizontal: 30, vertical: 14),
                                   child: Center(
                                       child: Text(
@@ -141,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                             ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
 
@@ -153,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
 
-                      SizedBox(
+                      const SizedBox(
                         height: 30,
                       ),
 
@@ -166,24 +177,24 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: context.mediaQueryWidth * 0.8,
                             decoration: BoxDecoration(
                                 color: Colors.white,
-                                boxShadow: [
+                                boxShadow: const [
                                   BoxShadow(
                                       color: Colors.black12,
                                       offset: Offset(1, 1),
                                       blurRadius: 10)
                                 ],
                                 borderRadius: BorderRadius.circular(30)),
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 30, vertical: 14),
                             child: Center(
                                 child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Image(
+                                const Image(
                                   image: AssetImage("assets/images/search.png"),
                                   width: 20,
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 5,
                                 ),
                                 Text(

@@ -1,23 +1,21 @@
 import 'package:cherry_toast/cherry_toast.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:my_hotel/configs/extensions.dart';
+import 'package:my_hotel/configs/routes/routes_name.dart';
 import 'package:my_hotel/configs/text_style.dart';
 import 'package:my_hotel/data/response/app_url.dart';
 import 'package:my_hotel/data/response/status.dart';
 import 'package:my_hotel/main.dart';
-import 'package:my_hotel/model/area_model.dart';
 import 'package:my_hotel/model/banner_model.dart';
 import 'package:my_hotel/model/hotel_model.dart';
 import 'package:my_hotel/utils/app_functions.dart';
 import 'package:my_hotel/utils/user_db.dart';
-import 'package:my_hotel/view/home/components/dropdown.dart';
-import 'package:my_hotel/view/login/components/InputFieldComponet.dart';
 import 'package:my_hotel/view_model/area_view_model.dart';
 import 'package:my_hotel/view_model/banner_view_model.dart';
+import 'package:my_hotel/view_model/favourite_view_model.dart';
 import 'package:my_hotel/view_model/hotel_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -43,10 +41,13 @@ class _HomePageState extends State<HomePage> {
   late AreaViewModel areaViewModel;
   @override
   Widget build(BuildContext context) {
+    final favouriteViewModel =
+        Provider.of<FavouriteViewModel>(context, listen: true);
     return Scaffold(
+      backgroundColor: Color.fromRGBO(245, 246, 249, 1),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 0),
+          padding: const EdgeInsets.symmetric(horizontal: 0),
           child: Column(
             children: [
               SizedBox(
@@ -76,14 +77,14 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                           color: Colors.blueGrey.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(blurRadius: 100, offset: Offset(1, 1))
                           ]),
-                      child: Icon(
+                      child: const Icon(
                         FontAwesomeIcons.solidEnvelope,
                         color: Colors.blueGrey,
                       ),
@@ -92,9 +93,12 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
+                  color: Colors.white,
                   border: Border.all(
                       color: Colors.blueGrey.withOpacity(0.4), width: 1),
                   borderRadius: BorderRadius.circular(10),
@@ -105,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                       hintStyle: MyTextStyle.textStyle(
                           fontSize: 15, color: Colors.grey),
                       border: InputBorder.none,
-                      prefixIcon: Icon(
+                      prefixIcon: const Icon(
                         FontAwesomeIcons.search,
                         color: Colors.blueGrey,
                       ),
@@ -117,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                             border: Border.all(
                                 width: 1,
                                 color: Colors.blueGrey.withOpacity(0.3))),
-                        child: Icon(
+                        child: const Icon(
                           FontAwesomeIcons.toolbox,
                           size: 20,
                         ),
@@ -140,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                             "See all",
                             style: MyTextStyle.textStyle(fontSize: 15),
                           ),
-                          Icon(
+                          const Icon(
                             FontAwesomeIcons.angleRight,
                             size: 16,
                           ),
@@ -150,13 +154,13 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Container(
                 width: context.mediaQueryWidth,
                 height: context.mediaQueryWidth * 0.13,
-                padding: EdgeInsets.symmetric(vertical: 3),
+                padding: const EdgeInsets.symmetric(vertical: 3),
                 child: ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
@@ -175,23 +179,23 @@ class _HomePageState extends State<HomePage> {
                     hotelViewModelByType = value;
                     switch (value.hotelListByTypeResponse.status) {
                       case Status.loading:
-                        return Container(
+                        return SizedBox(
                           height: context.mediaQueryHeight * 0.3,
-                          child: Center(
+                          child: const Center(
                             child: CircularProgressIndicator(
                               color: Colors.blueGrey,
                             ),
                           ),
                         );
                       case Status.error:
-                        return Center(
+                        return const Center(
                           child: CircularProgressIndicator(),
                         );
                       case Status.completed:
                         return Container(
                           width: context.mediaQueryWidth,
                           height: 270,
-                          padding: EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
                             vertical: 3,
                           ),
                           child: ListView.builder(
@@ -202,7 +206,8 @@ class _HomePageState extends State<HomePage> {
                             itemBuilder: (context, index) {
                               HotelModel hotelModel =
                                   value.hotelListByTypeResponse.data![index];
-                              return WidgetHotelByTypeView(hotelModel, context);
+                              return WidgetHotelByTypeView(hotelModel, context,
+                                  value, favouriteViewModel);
                             },
                           ),
                         );
@@ -213,18 +218,19 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             FontAwesomeIcons.locationArrow,
                             color: Colors.amberAccent,
                             size: 24,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 6,
                           ),
                           Text(
@@ -252,12 +258,12 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                           Container(
-                            margin: EdgeInsets.only(left: 10),
-                            padding: EdgeInsets.all(10),
+                            margin: const EdgeInsets.only(left: 10),
+                            padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 color: Colors.blueGrey.withOpacity(0.1)),
-                            child: Icon(
+                            child: const Icon(
                               FontAwesomeIcons.locationCrosshairs,
                               color: Colors.blueGrey,
                             ),
@@ -276,20 +282,21 @@ class _HomePageState extends State<HomePage> {
                     hotelViewModelByArea = value;
                     switch (value.hotelListByLocation.status) {
                       case Status.loading:
-                        return Container(
+                        return SizedBox(
                           height: context.mediaQueryHeight * 0.3,
-                          child: Center(
+                          child: const Center(
                             child: CircularProgressIndicator(),
                           ),
                         );
                       case Status.completed:
                         return ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           padding: EdgeInsets.zero,
                           itemBuilder: (context, index) {
                             return WidgetHotelByArea(
                                 value.hotelListByLocation.data![index],
-                                context);
+                                context,
+                                favouriteViewModel);
                           },
                           itemCount: value.hotelListByLocation.data!.length,
                           shrinkWrap: true,
@@ -302,14 +309,15 @@ class _HomePageState extends State<HomePage> {
               ),
 
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       FontAwesomeIcons.newspaper,
                       color: Colors.amberAccent,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     Text(
@@ -322,7 +330,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              Container(
+              SizedBox(
                   width: context.mediaQueryWidth,
                   height: context.mediaQueryHeight * 0.35,
                   child: ChangeNotifierProvider<BannerViewModel>(
@@ -333,9 +341,9 @@ class _HomePageState extends State<HomePage> {
                       builder: (context, value, child) {
                         switch (value.bannerListResponse.status) {
                           case Status.loading:
-                            return Container(
+                            return SizedBox(
                               height: context.mediaQueryHeight * 0.2,
-                              child: Center(
+                              child: const Center(
                                 child: CircularProgressIndicator(),
                               ),
                             );
@@ -345,7 +353,7 @@ class _HomePageState extends State<HomePage> {
                                   value.bannerListResponse.message!.toString()),
                             );
                           case Status.completed:
-                            return Container(
+                            return SizedBox(
                               height: context.mediaQueryHeight * 0.6,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
@@ -363,7 +371,10 @@ class _HomePageState extends State<HomePage> {
                         }
                       },
                     ),
-                  ))
+                  )),
+              SizedBox(
+                height: 10,
+              ),
             ],
           ),
         ),
@@ -381,219 +392,268 @@ class _HomePageState extends State<HomePage> {
           hotelViewModel.fetchHotelListByType(type: index);
         },
         child: Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
             decoration: BoxDecoration(
-                color: index == indexHotelType
-                    ? Colors.lightBlue.withOpacity(0.4)
-                    : Colors.white,
-                borderRadius: BorderRadius.circular(60),
-                border: Border.all(
-                    color: index == indexHotelType
-                        ? Colors.lightBlueAccent.withOpacity(0.4)
-                        : Colors.black.withAlpha(130))),
+              color: index == indexHotelType
+                  ? Colors.lightBlue.withOpacity(0.4)
+                  : Colors.white,
+              borderRadius: BorderRadius.circular(60),
+              border: Border.all(
+                  color: index == indexHotelType
+                      ? Colors.blueGrey.withOpacity(0.4)
+                      : Color.fromRGBO(232, 234, 241, 1),
+                  width: 1),
+            ),
             child: Text(
               hotelString,
               style: MyTextStyle.textStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: index == indexHotelType
-                      ? Colors.white
-                      : Colors.black.withAlpha(150)),
+                  fontSize: 14,
+                  // fontWeight: FontWeight.bold,
+                  color: index == indexHotelType ? Colors.white : Colors.black),
             )));
   }
 
-  Widget WidgetHotelByTypeView(HotelModel hotelModel, BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20.0, top: 10),
-      child: GestureDetector(
-        child: Container(
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black.withOpacity(0.2)),
-              borderRadius: BorderRadius.circular(10)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                children: <Widget>[
-                  Container(
-                    width: context.mediaQueryWidth * 0.5,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(
-                              10)), // Bo tròn ảnh với bán kính 10
-                      image: DecorationImage(
-                        image: NetworkImage(
-                            AppUrl.hotelImage + hotelModel.hotelImage),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+  Widget WidgetHotelByTypeView(HotelModel hotelModel, BuildContext context,
+      HotelViewModel hotelViewModel, FavouriteViewModel favouriteViewModel) {
+    return GestureDetector(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 20.0, top: 10),
+        child: GestureDetector(
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(
+                    color: Color.fromRGBO(232, 234, 241, 1), width: 1),
+                borderRadius: BorderRadius.circular(10)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, RoutesName.detailHotel,
+                            arguments: hotelModel.hotelId)
+                        .then((value) {
+                      // print("huhuhuhu");
+                      // hotelViewModelByType.fetchHotelListByType();
+                    });
+                  },
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        width: context.mediaQueryWidth * 0.5,
+                        height: 120,
                         decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Row(
-                          children: [
-                            Icon(
-                              FontAwesomeIcons.solidStar,
-                              size: 15,
-                              color: Colors.amber,
-                            ),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Text(
-                              "4.6",
-                              style: MyTextStyle.textStyle(
-                                  fontSize: 15,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        )),
-                  ),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 5),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      width: context.mediaQueryWidth * 0.39,
-                      child: Text(
-                        hotelModel.hotelName,
-                        style: MyTextStyle.textStyle(
-                                fontSize: 15,
-                                color: Colors.blueGrey,
-                                fontWeight: FontWeight.bold)
-                            .copyWith(
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        softWrap: true,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          FontAwesomeIcons.locationDot,
-                          size: 15,
-                          color: Colors.amber,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          hotelModel.areaModel.areaName.toString(),
-                          style: MyTextStyle.textStyle(
-                              fontSize: 13,
-                              color: Colors.black.withOpacity(0.5)),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      width: context.mediaQueryWidth * 0.43,
-                      height: 1,
-                      margin: EdgeInsets.symmetric(horizontal: 7),
-                      color: Colors.black.withOpacity(0.1),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Start from",
-                                style: MyTextStyle.textStyle(
-                                    fontSize: 12,
-                                    color: Colors.black.withOpacity(0.3))),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: "\$" +
-                                        AppFunctions.calculatePrice(
-                                            hotelModel.rooms[0].roomTypes[0]),
-                                    style: MyTextStyle.textStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blueGrey),
-                                  ),
-                                  TextSpan(
-                                      text: "/night",
-                                      style: MyTextStyle.textStyle(
-                                          fontSize: 12,
-                                          color: Colors.black.withOpacity(0.3)))
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.pinkAccent.withOpacity(0.2)),
-                          child: Icon(
-                            FontAwesomeIcons.heart,
-                            size: 20,
-                            color: Colors.pinkAccent,
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              topRight: Radius.circular(
+                                  10)), // Bo tròn ảnh với bán kính 10
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                AppUrl.hotelImage + hotelModel.hotelImage),
+                            fit: BoxFit.cover,
                           ),
-                        )
-                      ],
-                    )
-                  ],
+                        ),
+                      ),
+                      Positioned(
+                        top: 10,
+                        right: 10,
+                        child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 2),
+                            decoration: BoxDecoration(
+                                color: Colors.grey.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  FontAwesomeIcons.solidStar,
+                                  size: 15,
+                                  color: Colors.amber,
+                                ),
+                                const SizedBox(
+                                  width: 6,
+                                ),
+                                Text(
+                                  "4.6",
+                                  style: MyTextStyle.textStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            )),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        width: context.mediaQueryWidth * 0.39,
+                        child: Text(
+                          hotelModel.hotelName,
+                          style: MyTextStyle.textStyle(
+                                  fontSize: 15,
+                                  color: Colors.blueGrey,
+                                  fontWeight: FontWeight.bold)
+                              .copyWith(
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          softWrap: true,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                            FontAwesomeIcons.locationDot,
+                            size: 15,
+                            color: Colors.amber,
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            hotelModel.areaModel.areaName.toString(),
+                            style: MyTextStyle.textStyle(
+                                fontSize: 13,
+                                color: Colors.black.withOpacity(0.5)),
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        width: context.mediaQueryWidth * 0.43,
+                        height: 1,
+                        margin: const EdgeInsets.symmetric(horizontal: 7),
+                        color: Colors.black.withOpacity(0.1),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Start from",
+                                  style: MyTextStyle.textStyle(
+                                      fontSize: 12,
+                                      color: Colors.black.withOpacity(0.3))),
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text:
+                                          "\$${AppFunctions.calculatePrice(hotelModel.rooms[0].roomTypes[0])}",
+                                      style: MyTextStyle.textStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blueGrey),
+                                    ),
+                                    TextSpan(
+                                        text: "/night",
+                                        style: MyTextStyle.textStyle(
+                                            fontSize: 12,
+                                            color:
+                                                Colors.black.withOpacity(0.3)))
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              if (favouriteViewModel
+                                      .checkFavouriteId(hotelModel.hotelId) ==
+                                  true) {
+                                favouriteViewModel
+                                    .deleteFavouriteId(hotelModel.hotelId);
+                                CherryToast.success(
+                                  title: Text("Đã xóa ra khỏi mục yêu thích!"),
+                                ).show(context);
+                              } else {
+                                favouriteViewModel
+                                    .addFavouriteId(hotelModel.hotelId);
+                                CherryToast.success(
+                                  title: Text("Đã thêm vào mục yêu thích!"),
+                                ).show(context);
+                              }
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                  color: Colors.pink.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: favouriteViewModel.checkFavouriteId(
+                                          hotelModel.hotelId) ==
+                                      false
+                                  ? Icon(
+                                      FontAwesomeIcons.heart,
+                                      color: Colors.pinkAccent,
+                                      size: 17,
+                                    )
+                                  : Icon(
+                                      FontAwesomeIcons.solidHeart,
+                                      color: Colors.pinkAccent,
+                                      size: 17,
+                                    ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget WidgetHotelByArea(HotelModel hotelModel, BuildContext context) {
+  Widget WidgetHotelByArea(HotelModel hotelModel, BuildContext context,
+      FavouriteViewModel favouriteViewModel) {
     return Padding(
       padding:
           const EdgeInsets.only(left: 20.0, top: 10, right: 20, bottom: 10),
-      child: GestureDetector(
-        child: Container(
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black.withOpacity(0.2)),
-              borderRadius: BorderRadius.circular(10)),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
+      child: Container(
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border:
+                Border.all(color: Color.fromRGBO(232, 234, 241, 1), width: 1),
+            borderRadius: BorderRadius.circular(10)),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, RoutesName.detailHotel,
+                    arguments: hotelModel.hotelId);
+              },
+              child: Stack(
                 children: <Widget>[
                   Container(
                     width: context.mediaQueryWidth * 0.35,
                     height: 150,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(10),
                           bottomLeft: Radius.circular(
                               10)), // Bo tròn ảnh với bán kính 10
@@ -608,19 +668,19 @@ class _HomePageState extends State<HomePage> {
                     top: 10,
                     left: 10,
                     child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 2),
                         decoration: BoxDecoration(
                             color: Colors.grey.withOpacity(0.5),
                             borderRadius: BorderRadius.circular(10)),
                         child: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               FontAwesomeIcons.solidStar,
                               size: 15,
                               color: Colors.amber,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 6,
                             ),
                             Text(
@@ -635,65 +695,67 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Container(
-                      width: context.mediaQueryWidth * 0.39,
-                      child: Text(
-                        hotelModel.hotelName,
-                        style: MyTextStyle.textStyle(
-                                fontSize: 15,
-                                color: Colors.blueGrey,
-                                fontWeight: FontWeight.bold)
-                            .copyWith(
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        softWrap: true,
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  SizedBox(
+                    width: context.mediaQueryWidth * 0.39,
+                    child: Text(
+                      hotelModel.hotelName,
+                      style: MyTextStyle.textStyle(
+                              fontSize: 15,
+                              color: Colors.blueGrey,
+                              fontWeight: FontWeight.bold)
+                          .copyWith(
+                        overflow: TextOverflow.ellipsis,
                       ),
+                      softWrap: true,
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          FontAwesomeIcons.locationDot,
-                          size: 15,
-                          color: Colors.amber,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          hotelModel.areaModel.areaName,
-                          style: MyTextStyle.textStyle(
-                              fontSize: 13,
-                              color: Colors.black.withOpacity(0.5)),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Container(
-                      width: context.mediaQueryWidth * 0.43,
-                      height: 1,
-                      margin: EdgeInsets.symmetric(horizontal: 7),
-                      color: Colors.black.withOpacity(0.1),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      const Icon(
+                        FontAwesomeIcons.locationDot,
+                        size: 15,
+                        color: Colors.amber,
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        hotelModel.areaModel.areaName,
+                        style: MyTextStyle.textStyle(
+                            fontSize: 13, color: Colors.black.withOpacity(0.5)),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                    width: context.mediaQueryWidth * 0.43,
+                    height: 1,
+                    margin: const EdgeInsets.symmetric(horizontal: 7),
+                    color: Colors.black.withOpacity(0.1),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: context.mediaQueryWidth * 0.31,
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("Start from",
@@ -704,9 +766,8 @@ class _HomePageState extends State<HomePage> {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: "\$" +
-                                        AppFunctions.calculatePrice(
-                                            hotelModel.rooms[0].roomTypes[0]),
+                                    text:
+                                        "\$${AppFunctions.calculatePrice(hotelModel.rooms[0].roomTypes[0])}",
                                     style: MyTextStyle.textStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
@@ -722,30 +783,57 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ],
                         ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Container(
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          if (favouriteViewModel
+                                  .checkFavouriteId(hotelModel.hotelId) ==
+                              true) {
+                            favouriteViewModel
+                                .deleteFavouriteId(hotelModel.hotelId);
+                            CherryToast.success(
+                              title: Text("Đã xóa ra khỏi mục yêu thích!"),
+                            ).show(context);
+                          } else {
+                            favouriteViewModel
+                                .addFavouriteId(hotelModel.hotelId);
+                            CherryToast.success(
+                              title: Text("Đã thêm vào mục yêu thích!"),
+                            ).show(context);
+                          }
+                        },
+                        child: Container(
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.pinkAccent.withOpacity(0.2)),
-                          child: Icon(
-                            FontAwesomeIcons.heart,
-                            size: 20,
-                            color: Colors.pinkAccent,
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                  ],
-                ),
+                              color: Colors.pink.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: favouriteViewModel
+                                      .checkFavouriteId(hotelModel.hotelId) ==
+                                  false
+                              ? Icon(
+                                  FontAwesomeIcons.heart,
+                                  color: Colors.pinkAccent,
+                                  size: 17,
+                                )
+                              : Icon(
+                                  FontAwesomeIcons.solidHeart,
+                                  color: Colors.pinkAccent,
+                                  size: 17,
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -779,7 +867,7 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.blueGrey),
                 );
               } else {
-                return Text("Loi");
+                return const Text("Loi");
               }
             },
           ),
@@ -792,7 +880,9 @@ class _HomePageState extends State<HomePage> {
       child: GestureDetector(
           child: Container(
         decoration: BoxDecoration(
-            border: Border.all(color: Colors.black.withOpacity(0.2)),
+            color: Colors.white,
+            border:
+                Border.all(color: Color.fromRGBO(232, 234, 241, 1), width: 1),
             borderRadius: BorderRadius.circular(10)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -801,7 +891,7 @@ class _HomePageState extends State<HomePage> {
               width: context.mediaQueryWidth * 0.6,
               height: 120,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(10),
                     topRight:
                         Radius.circular(10)), // Bo tròn ảnh với bán kính 10
@@ -812,16 +902,16 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Container(
-                padding: EdgeInsets.symmetric(horizontal: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 15,
                       ),
                       Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5, vertical: 2),
                         decoration: BoxDecoration(
                             color: Colors.green.withOpacity(0.15)),
                         child: Text(
@@ -830,10 +920,10 @@ class _HomePageState extends State<HomePage> {
                               fontSize: 12, color: Colors.green),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
-                      Container(
+                      SizedBox(
                         width: context.mediaQueryWidth * 0.5,
                         child: Text(
                           bannerModel.title,
@@ -847,7 +937,7 @@ class _HomePageState extends State<HomePage> {
                           softWrap: true,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Text(

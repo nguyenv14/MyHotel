@@ -32,12 +32,12 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future<ObjectDTO> loginApi(
-      String customer_email, String customer_password) async {
+      String customerEmail, String customerPassword) async {
     try {
       setLoginLoading(true);
       var body = {
-        "customer_email": customer_email,
-        "customer_password": customer_password
+        "customer_email": customerEmail,
+        "customer_password": customerPassword
       };
       final response = await authRepository.checkLogin(body);
       if (response.statusCode == 200) {

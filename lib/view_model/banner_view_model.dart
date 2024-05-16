@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:my_hotel/data/response/api_response.dart';
 import 'package:my_hotel/model/banner_model.dart';
